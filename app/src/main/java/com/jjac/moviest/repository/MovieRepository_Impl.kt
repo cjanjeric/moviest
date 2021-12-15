@@ -7,8 +7,12 @@ import com.jjac.moviest.database.MoviestDb
 import com.jjac.moviest.database.entity.asDomainModel
 import com.jjac.moviest.network.MovieService
 import com.jjac.moviest.network.model.MovieDtoMapper
+import com.jjac.moviest.network.response.MovieSearchResponse
 import com.jjac.store.domain.model.Movie
 import com.jjac.store.domain.model.asDatabaseModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MovieRepository_Impl(
     private val movieService: MovieService,
@@ -16,12 +20,33 @@ class MovieRepository_Impl(
     private val localDataSource: MoviestDb
 ) : MovieRepository {
 
-    override suspend fun search(term: String, country: String, media: String): List<Movie> {
-        return mapper.toDomainList(movieService.search(term, country, media).movies)
+    override suspend fun updateMovies(term: String, country: String, media: String) {
+        movieService.search(term, country, media).enqueue(object : Callback<MovieSearchResponse> {
+            override fun onResponse(
+                call: Call<MovieSearchResponse>,
+                response: Response<MovieSearchResponse>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let { movies ->
+                        Thread {
+                            localDataSource.movieDao.updateMovies(mapper.toDomainList(movies.movies))
+                        }.start()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<MovieSearchResponse>, t: Throwable) {}
+        })
     }
 
     override fun getVisitedMovies(): LiveData<List<Movie>> {
-       return Transformations.map(localDataSource.movieDao.getPreviousVisitedMovies()){
+        return Transformations.map(localDataSource.movieDao.getPreviousVisitedMovies()) {
+            it.asDomainModel()
+        }
+    }
+
+    override fun getMovies(): LiveData<List<Movie>> {
+        return Transformations.map(localDataSource.movieDao.getMovies()) {
             it.asDomainModel()
         }
     }

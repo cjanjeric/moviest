@@ -1,6 +1,7 @@
 package com.jjac.moviest.presentation.ui.movies
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +50,8 @@ class MovieListFragment : Fragment() {
                     displayProgressBar = false,
                     scaffoldState = scaffoldState
                 ) {
+
+                    Log.d("jeric", "MOVIES  " + viewModel.visitedMovies.value)
                     MovieList(
                         loading = loading,
                         movies = movies,
@@ -78,6 +81,11 @@ class MovieListFragment : Fragment() {
         viewModel.sourceVisitedMovies.observe(viewLifecycleOwner, Observer { movies ->
             movies?.let {
                 viewModel.visitedMovies.value = it
+            }
+        })
+        viewModel.sourceMovies.observe(viewLifecycleOwner, Observer { movies ->
+            movies?.let {
+                viewModel.movies.value = it
             }
         })
     }

@@ -1,5 +1,6 @@
 package com.jjac.moviest.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,33 +30,15 @@ fun MovieList(
         } else if (movies.isEmpty()) {
             NothingHere()
         } else {
-
-            if (visitedMovies.isNotEmpty()) {
-                Column {
-                    Text(
-                        text = "Visited Movies",
-                        modifier = Modifier
-                            .fillMaxWidth(0.85f)
-                            .wrapContentWidth(Alignment.Start),
-                        style = MaterialTheme.typography.h3
-                    )
-                    LazyRow(modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)){
-                        itemsIndexed(
-                            items = visitedMovies
-                        ) { index, movie ->
-                            MovieCard(
-                                movie = movie,
-                                onClick = {
-                                    onNavigateToMovieDetailScreen(movie)
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
-            Column(modifier = if (visitedMovies.isEmpty()) Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)
-            else Modifier.padding(0.dp, 180.dp, 0.dp, 0.dp)) {
+            Column(
+                modifier = if (visitedMovies.isEmpty()) Modifier.padding(
+                    0.dp,
+                    10.dp,
+                    0.dp,
+                    0.dp
+                )
+                else Modifier.padding(0.dp, 180.dp, 0.dp, 0.dp)
+            ) {
                 Text(
                     text = "Watch Movies",
                     modifier = Modifier
@@ -63,9 +46,33 @@ fun MovieList(
                         .wrapContentWidth(Alignment.Start),
                     style = MaterialTheme.typography.h3
                 )
-                LazyColumn{
+                LazyColumn {
                     itemsIndexed(
                         items = movies
+                    ) { index, movie ->
+                        MovieCard(
+                            movie = movie,
+                            onClick = {
+                                onNavigateToMovieDetailScreen(movie)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        if (visitedMovies.isNotEmpty()) {
+            Column {
+                Text(
+                    text = "Visited Movies",
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .wrapContentWidth(Alignment.Start),
+                    style = MaterialTheme.typography.h3
+                )
+                LazyRow(modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)) {
+                    itemsIndexed(
+                        items = visitedMovies
                     ) { index, movie ->
                         MovieCard(
                             movie = movie,

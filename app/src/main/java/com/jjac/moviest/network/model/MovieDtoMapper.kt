@@ -1,16 +1,18 @@
 package com.jjac.moviest.network.model
 
+import com.jjac.moviest.database.entity.MovieEntity
 import com.jjac.store.domain.model.Movie
 import com.jjac.store.domain.util.DomainMapper
 import javax.inject.Inject
 
-class MovieDtoMapper @Inject constructor(): DomainMapper<MovieDto, Movie> {
-    override fun mapFromDomainModel(domainModel: Movie): MovieDto {
+class MovieDtoMapper @Inject constructor(): DomainMapper<MovieDto, MovieEntity> {
+
+    override fun mapFromDomainModel(domainModel: MovieEntity): MovieDto {
         TODO("Not yet implemented")
     }
 
-    override fun mapToDomainModel(model: MovieDto): Movie {
-        return Movie(
+    override fun mapToDomainModel(model: MovieDto): MovieEntity {
+        return MovieEntity(
             id = model.id,
             trackId = model.trackId,
             collectionId = model.collectionId,
@@ -25,7 +27,7 @@ class MovieDtoMapper @Inject constructor(): DomainMapper<MovieDto, Movie> {
         )
     }
 
-    fun toDomainList(initial: List<MovieDto>): List<Movie>{
+    fun toDomainList(initial: List<MovieDto>): List<MovieEntity>{
         return initial.map { mapToDomainModel(it) }
     }
 }

@@ -30,19 +30,20 @@ class MovieListViewModel @Inject constructor(
 
     fun search(){
         viewModelScope.launch {
+
             /*Hardcoded parameters*/
-            val result = repository.search(
+            val result = repository.updateMovies(
                 "star",
                 "au",
                 "movie"
             )
-
-            movies.value = result
             loading.value = false
         }
     }
 
     val sourceVisitedMovies = repository.getVisitedMovies()
+
+    val sourceMovies = repository.getMovies()
 
     fun isExist(movie: Movie) = repository.isExist(movie)
 
